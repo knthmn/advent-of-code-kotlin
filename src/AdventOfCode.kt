@@ -127,6 +127,7 @@ private val httpClient = run {
     HttpClient {
         defaultRequest {
             header("Cookie", "session=$token")
+            header("User-Agent", "https://github.com/knthmn/advent-of-code-kotlin by knthmn0@gmail.com")
         }
     }
 }

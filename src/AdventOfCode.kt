@@ -170,13 +170,17 @@ private fun generateSubmissionTestCase(
                 println("The answer is correct and was already submitted.")
                 return@test
             }
-
             is SubmissionResult.Incorrect -> {
                 println("This result is wrong and was already submitted.")
                 println(matchingEntry.result.message)
                 throw AssertionError(matchingEntry.result.trimmedMessage)
             }
         }
+    }
+    val correctEntry = answerCache.entries.find { it.result == SubmissionResult.Correct }
+    if (correctEntry != null) {
+        println("The result is wrong, correct answer is:\n${quoteStyle(correctEntry.answer)}")
+        throw AssertionError("The result is wrong")
     }
     val lastEntry = answerCache.entries.lastOrNull()
     if (lastEntry != null) {

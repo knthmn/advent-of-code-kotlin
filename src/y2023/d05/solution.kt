@@ -2,48 +2,17 @@ package y2023.d05
 
 import AdventOfCode
 import split
-import util.SparseLongSet
 import util.intersect
-import util.quickMap
-import util.rangeDifference
 
 private data class MappingEntry(val range: LongRange, val shift: Long)
 
-private data class Mapping(val entries: List<MappingEntry>) {
-    fun map(category: Long): Long = category + (entries.firstOrNull { category in it.range }?.shift ?: 0)
-
-    fun map(categoryRange: LongRange): List<LongRange> {
-        val mappedRanges = mutableListOf<LongRange>()
-        var nonMappedRanges = listOf(categoryRange)
-        for (entry in entries) {
-            nonMappedRanges = nonMappedRanges.flatMap { range ->
-                val intersect = range intersect entry.range
-                val difference = range rangeDifference entry.range
-                if (!intersect.isEmpty()) {
-                    mappedRanges.add(
-                        LongRange(
-                            intersect.first + entry.shift,
-                            intersect.last + entry.shift,
-                        ),
-                    )
-                }
-                difference
-            }
-        }
-        return mappedRanges + nonMappedRanges
-    }
-}
-
-private fun parseInput(lines: List<String>): Pair<List<Long>, List<Mapping>> {
+private fun parseInput(lines: List<String>): Pair<List<Long>, List<List<MappingEntry>>> {
     val seeds = lines[0].substring(7).split(" ").map { it.toLong() }
     val mappings = lines.drop(2).split("").map { section ->
-        val entries = section
-            .drop(1)
-            .map { line ->
-                val (destStart, sourceStart, length) = line.split(" ").map { it.toLong() }
-                MappingEntry(sourceStart..<sourceStart + length, destStart - sourceStart)
-            }
-        Mapping(entries)
+        section.drop(1).map { line ->
+            val (destStart, sourceStart, length) = line.split(" ").map { it.toLong() }
+            MappingEntry(sourceStart..<sourceStart + length, destStart - sourceStart)
+        }.sortedBy { it.range.first }
     }
     return seeds to mappings
 }
@@ -53,7 +22,9 @@ class y2023d05p1 : AdventOfCode({
 }, { lines ->
     val (seeds, mappings) = parseInput(lines)
     seeds.minOf { seed ->
-        mappings.fold(seed) { category, mapping -> mapping.map(category) }
+        mappings.fold(seed) { category, mapping ->
+            category + (mapping.firstOrNull { category in it.range }?.shift ?: 0)
+        }
     }
 })
 
@@ -61,11 +32,23 @@ class y2023d05p2 : AdventOfCode({
     testFile("t01.txt", 46)
 }, { lines ->
     val (rawSeeds, mappings) = parseInput(lines)
-    val seeds = SparseLongSet.from(rawSeeds.windowed(2, step = 2).map { it[0]..<it[0] + it[1] })
+    val seeds = rawSeeds.chunked(2).map { it[0]..<it[0] + it[1] }
+
     val result = mappings.fold(seeds) { categories, mapping ->
-        categories.quickMap {
-            mapping.map(it)
+        categories.flatMap { categoryRange ->
+            val mappableRanges =
+                mapping.map { it.copy(range = it.range intersect categoryRange) }.filter { it.range.isEmpty().not() }
+            val mappedRanges = mappableRanges.map { it.range.first + it.shift..it.range.last + it.shift }
+            val nonMappedRanges = buildList {
+                add(categoryRange.first)
+                mappableRanges.forEach {
+                    add(it.range.first - 1)
+                    add(it.range.last + 1)
+                }
+                add(categoryRange.last)
+            }.chunked(2).map { it[0]..it[1] }.filter { !it.isEmpty() }
+            mappedRanges + nonMappedRanges
         }
     }
-    result.ranges[0].first
+    result.minOf { it.first }
 })

@@ -12,3 +12,7 @@ fun <T> List<T>.split(delimeter: T): List<List<T>> = buildList {
         add(buffer.toList())
     }
 }
+
+fun <T> Iterable<T>.repeatInfinitely() = sequence {
+    while (true) yieldAll(this@repeatInfinitely)
+}

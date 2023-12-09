@@ -13,19 +13,19 @@ private data class Number(
     val positions = generateSequence(startPosition) { it.right }.take(value.toString().length)
 }
 
-private fun Map<IntVec2D, Char>.getNumber(pos: IntVec2D): Number? {
-    if (this[pos]?.isDigit() != true) return null
+private fun Map<IntVec2D, Char>.getNumber(position: IntVec2D): Number? {
+    if (this[position]?.isDigit() != true) return null
     val startPos =
-        generateSequence(pos) { it.left }.takeWhile { this[it]?.isDigit() ?: false }.last()
-    val poss = generateSequence(startPos) { it.right }.takeWhile { this[it]?.isDigit() ?: false }
-    val value = poss.joinToString("") { getValue(it).toString() }.toInt()
+        generateSequence(position) { it.left }.takeWhile { this[it]?.isDigit() ?: false }.last()
+    val positions = generateSequence(startPos) { it.right }.takeWhile { this[it]?.isDigit() ?: false }
+    val value = positions.joinToString("") { getValue(it).toString() }.toInt()
     return Number(value, startPos)
 }
 
 private fun parseSchematic(lines: List<String>) = buildMap<IntVec2D, Char> {
     lines.forEachIndexed { y, line ->
         line.forEachIndexed { x, c ->
-            if (c !== '.') put(IntVec2D(x, y), c)
+            if (c != '.') put(IntVec2D(x, y), c)
         }
     }
 }

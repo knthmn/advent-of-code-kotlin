@@ -72,6 +72,8 @@ open class AdventOfCode(
         )
     }
 
+    fun readTestFileLines(fileName: String) = readResourceFile(problemDirectory / fileName).split("\n")
+
     fun testFile(
         fileName: String,
         answer: Any,
@@ -170,6 +172,7 @@ private fun generateSubmissionTestCase(
                 println("The answer is correct and was already submitted.")
                 return@test
             }
+
             is SubmissionResult.Incorrect -> {
                 println("This result is wrong and was already submitted.")
                 println(matchingEntry.result.message)

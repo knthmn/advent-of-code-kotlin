@@ -16,3 +16,9 @@ fun <T> List<T>.split(delimeter: T): List<List<T>> = buildList {
 fun <T> Iterable<T>.repeatInfinitely() = sequence {
     while (true) yieldAll(this@repeatInfinitely)
 }
+
+fun <T> List<T>.repeat(n: Int) = buildList(size * n) {
+    repeat(n) {
+        addAll(this@repeat)
+    }
+}

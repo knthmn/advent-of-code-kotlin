@@ -9,6 +9,14 @@ fun List<String>.positionOf(char: Char): IntVec2D? {
     return null
 }
 
+fun List<String>.charSequence() = sequence {
+    forEachIndexed { y, line ->
+        line.forEachIndexed { x, c ->
+            yield(PositionedValue(IntVec2D(x, y), c))
+        }
+    }
+}
+
 operator fun List<String>.get(position: IntVec2D): Char? {
     val line = getOrNull(position.y) ?: return null
     return line.getOrNull(position.x)

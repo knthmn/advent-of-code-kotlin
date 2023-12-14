@@ -15,6 +15,8 @@ data class IntVec2D(val x: Int, val y: Int) {
     override fun toString() = "($x, $y)"
 }
 
+data class PositionedValue<T>(val position: IntVec2D, val value: T)
+
 val IntVec2D.neighbors
     get() = listOf(
         this + IntVec2D(0, -1),

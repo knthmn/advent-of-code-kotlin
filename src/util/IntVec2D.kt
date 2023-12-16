@@ -65,3 +65,14 @@ fun search(
         toSearch.addAll(nextPoints)
     }
 }
+
+data class PosVel(val position: IntVec2D, val velocity: IntVec2D) {
+
+    fun advance() = copy(position = position + velocity)
+
+    fun turnLeft() = copy(velocity = velocity.antiClockwise)
+
+    fun turnRight() = copy(velocity = velocity.clockwise)
+
+    override fun toString() = "$position▶$velocity"
+}

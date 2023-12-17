@@ -12,8 +12,12 @@ data class IntVec2D(val x: Int, val y: Int) {
 
     operator fun unaryMinus() = IntVec2D(-x, -y)
 
+    operator fun times(scalar: Int) = IntVec2D(scalar * x, scalar * y)
+
     override fun toString() = "($x, $y)"
 }
+
+operator fun Int.times(vec: IntVec2D) = vec * this
 
 data class PositionedValue<T>(val position: IntVec2D, val value: T)
 
@@ -68,7 +72,7 @@ fun search(
 
 data class PosVel(val position: IntVec2D, val velocity: IntVec2D) {
 
-    fun advance() = copy(position = position + velocity)
+    fun advance(steps: Int = 1) = copy(position = position + steps * velocity)
 
     fun turnLeft() = copy(velocity = velocity.antiClockwise)
 

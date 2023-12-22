@@ -53,6 +53,8 @@ val IntVec2D.clockwise get() = IntVec2D(-y, x)
 
 val IntVec2D.antiClockwise get() = IntVec2D(y, -x)
 
+infix fun IntVec2D.mod(other: Int) = IntVec2D(x.mod(other), y.mod(other))
+
 fun search(
     startingLocation: IntVec2D,
     predicate: (IntVec2D) -> Boolean = { true },

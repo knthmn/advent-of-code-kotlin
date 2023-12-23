@@ -22,3 +22,9 @@ fun <T> List<T>.repeat(n: Int) = buildList(size * n) {
         addAll(this@repeat)
     }
 }
+
+fun <T> MutableSet<T>.pop(): T {
+    val element = iterator().next()
+    remove(element)
+    return element
+}

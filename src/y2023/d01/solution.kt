@@ -1,8 +1,6 @@
 package y2023.d01
 
 import AdventOfCode
-import util.findAllOverlapped
-import util.keysAsRegex
 
 class y2023d01p1 : AdventOfCode({
     testFile("t01.txt", 142)
@@ -18,21 +16,19 @@ class y2023d01p2 : AdventOfCode({
     testString("overlapping", "threeight", 38)
 }, { lines ->
     lines.sumOf { line ->
-        val digits = Regex("""(?:${numberMap.keysAsRegex()}|\d)""").findAllOverlapped(line).map { it.value }.map {
-            numberMap.getOrDefault(it, it)
-        }
-        "${digits.first()}${digits.last()}".toInt()
+        numberMap.getValue(line.findAnyOf(numberMap.keys)!!.second) * 10 +
+                numberMap.getValue(line.findLastAnyOf(numberMap.keys)!!.second)
     }
 })
 
-private val numberMap = mapOf(
-    "one" to "1",
-    "two" to "2",
-    "three" to "3",
-    "four" to "4",
-    "five" to "5",
-    "six" to "6",
-    "seven" to "7",
-    "eight" to "8",
-    "nine" to "9",
-)
+private val numberMap = listOf(
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+).withIndex().associate { it.value to it.index + 1 } + (0..9).associateBy { it.toString() }

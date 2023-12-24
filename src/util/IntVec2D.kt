@@ -19,6 +19,8 @@ data class IntVec2D(val x: Int, val y: Int) {
 
 operator fun Int.times(vec: IntVec2D) = vec * this
 
+infix fun IntVec2D.mod(divisor: Int) = IntVec2D(x.mod(divisor), y.mod(divisor))
+
 data class PositionedValue<T>(val position: IntVec2D, val value: T)
 
 val IntVec2D.neighbors
@@ -67,6 +69,23 @@ fun search(
         val nextPoints = nextLocation(head).filter { it !in addedToSearch && predicate(it) }
         addedToSearch.addAll(nextPoints)
         toSearch.addAll(nextPoints)
+    }
+}
+
+fun searchWithSteps(
+    startingLocation: IntVec2D,
+    predicate: (pos: IntVec2D, numSteps: Int) -> Boolean = { _, _ -> true },
+    nextLocation: (IntVec2D) -> Collection<IntVec2D> = { it.neighbors },
+) = sequence {
+    if (!predicate(startingLocation, 0)) return@sequence
+    val addedToSearch = mutableSetOf(startingLocation)
+    val toSearch = ArrayDeque(listOf(startingLocation to 0))
+    while (toSearch.isNotEmpty()) {
+        val (head, numSteps) = toSearch.removeFirst()
+        yield(PositionedValue(head, numSteps))
+        val nextPoints = nextLocation(head).filter { it !in addedToSearch && predicate(it, numSteps + 1) }
+        addedToSearch.addAll(nextPoints)
+        toSearch.addAll(nextPoints.map { it to numSteps + 1 })
     }
 }
 

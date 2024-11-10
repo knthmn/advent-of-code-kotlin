@@ -22,6 +22,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("org.apache.commons:commons-math3:3.0")
     implementation("org.jgrapht:jgrapht-core:1.5.2")
+    implementation("org.choco-solver:choco-solver:4.10.14")
     testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
 }
 
